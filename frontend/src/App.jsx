@@ -1,18 +1,28 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginView from "./views/LoginView";
+import RegisterView from "./views/RegisterView";
+import DashboardView from "./views/DashboardView";
 
-function App() {
-  const [status, setStatus] = useState("loading...");
-
-  useEffect(() => {
-    fetch("http://localhost:8000/api/health")
-      .then((res) => res.json())
-      .then((data) =>
-        setStatus(data.status + ", database " + data.database)
-      )
-      .catch(() => setStatus("backend not reachable"));
-  }, []);
-
-  return <h1>StudyBuddy backend: {status}</h1>;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginView />} />
+          <Route path="/register" element={<RegisterView />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardView />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
-
-export default App;
