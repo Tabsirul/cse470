@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import DashboardView from "./views/DashboardView";
+import PrereqVerifyView from "./views/PrereqVerifyView";
 
 export default function App() {
   return (
@@ -17,6 +18,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <DashboardView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/verify"
+            element={
+              <ProtectedRoute>
+                <PrereqVerifyView />
               </ProtectedRoute>
             }
           />

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function DashboardView() {
@@ -15,6 +15,11 @@ export default function DashboardView() {
       <h1>Welcome, {user.name}</h1>
       <p>Email: {user.email}</p>
       <p>Role: {user.role}</p>
+      {(user.role === "tutor" || user.role === "admin") && (
+        <p>
+          <Link to="/verify">Tutor course verification</Link>
+        </p>
+      )}
       <button onClick={handleLogout}>Log out</button>
     </div>
   );
