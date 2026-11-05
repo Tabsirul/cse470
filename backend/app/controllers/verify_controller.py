@@ -6,11 +6,29 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.dependencies import get_current_user, require_role
 from app.models.user import User
-from app.schemas.verify import ClaimRequest, ClaimResponse, ReviewRequest, RuleRequest, RuleResponse
+from app.schemas.verify import (
+    ClaimRequest,
+    ClaimResponse,
+    CourseRuleResponse,
+    ReviewRequest,
+    RuleRequest,
+    RuleResponse,
+)
 from app.services import verify_service
 
 router = APIRouter(prefix="/api/verify", tags=["prerequisite verification"])
 
+@router.get("/grades", response_model=list[str])
+def list_grades(user: User = Depends(get_current_user)):
+    return verify_service.list_grades()
+
+
+@router.get("/courses", response_model=list[CourseRuleResponse])
+def list_courses(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    return verify_service.list_courses(db)
 
 @router.get("/rules", response_model=list[RuleResponse])
 def list_rules(

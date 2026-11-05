@@ -25,7 +25,12 @@ class RuleResponse(BaseModel):
     course_title: str
     min_grade: str
 
-
+class CourseRuleResponse(BaseModel):
+    course_id: int
+    course_code: str
+    course_title: str
+    min_grade: str | None
+    
 class ClaimRequest(BaseModel):
     course_id: int
     claimed_grade: Grade

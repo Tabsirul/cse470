@@ -7,7 +7,7 @@ from app.models.prerequisite import Prerequisite
 from app.models.tutor_course import TutorCourse
 from app.models.user import User
 from app.services.errors import ConflictError, NotFoundError
-from app.services.grade_rules import decide_claim
+from app.services.grade_rules import GRADE_POINTS, decide_claim
 
 
 def get_course(db: Session, course_id: int) -> Course:
@@ -50,7 +50,25 @@ def list_rules(db: Session) -> list[dict]:
     ).all()
     return [rule_detail(rule, course) for rule, course in rows]
 
+def list_grades() -> list[str]:
+    return list(GRADE_POINTS)
 
+
+def list_courses(db: Session) -> list[dict]:
+    rows = db.execute(
+        select(Course, Prerequisite)
+        .outerjoin(Prerequisite, Prerequisite.course_id == Course.id)
+        .order_by(Course.code)
+    ).all()
+    return [
+        {
+            "course_id": course.id,
+            "course_code": course.code,
+            "course_title": course.title,
+            "min_grade": rule.min_grade if rule else None,
+        }
+        for course, rule in rows
+    ]
 def set_rule(db: Session, course_id: int, min_grade: str) -> dict:
     course = get_course(db, course_id)
     rule = db.scalar(select(Prerequisite).where(Prerequisite.course_id == course_id))
