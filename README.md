@@ -41,6 +41,7 @@ cp .env.example .env
 ```
 
 Update `backend/.env` with your PostgreSQL password.
+Also replace SECRET_KEY with your own random text. Make one with: python3 -c "import secrets; print(secrets.token_hex(32))"
 
 Run database migrations:
 
@@ -90,3 +91,5 @@ Open http://localhost:5173 to check the frontend.
 - Never commit `.env`, `venv/`, or `node_modules/`.
 - Each teammate must create their own local `.env` file.
 - Run the backend and frontend in separate Terminal windows.
+  
+More details: see docs/SETUP_AND_WORKFLOW.md
