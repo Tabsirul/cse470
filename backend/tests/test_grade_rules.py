@@ -1,6 +1,6 @@
 import pytest
 
-from app.services.grade_rules import decide_claim, grade_points, meets_requirement
+from app.services.grade_rules import GRADE_POINTS, decide_claim, grade_points, meets_requirement
 
 
 def test_grade_points_known_letters():

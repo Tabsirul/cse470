@@ -1,4 +1,4 @@
-from app.services.grade_rules import GRADE_POINTS, decide_claim, grade_points, meets_requirement
+
 GRADE_POINTS = {
     "A+": 4.0,
     "A": 4.0,
