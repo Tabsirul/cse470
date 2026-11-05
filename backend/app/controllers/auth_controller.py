@@ -11,7 +11,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 def register(data: RegisterRequest, db: Session = Depends(get_db)):
-    user = auth_service.register_user(db, data.name, data.email, data.password, "student")
+    user = auth_service.register_user(
+        db, data.name, data.email, data.password, data.role
+    )
     if user is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     return TokenResponse(
