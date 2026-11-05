@@ -91,5 +91,4 @@ Open http://localhost:5173 to check the frontend.
 - Never commit `.env`, `venv/`, or `node_modules/`.
 - Each teammate must create their own local `.env` file.
 - Run the backend and frontend in separate Terminal windows.
-  
-More details: see docs/SETUP_AND_WORKFLOW.md
+
