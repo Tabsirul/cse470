@@ -18,7 +18,9 @@ export async function apiRequest(path, { method = "GET", body, token } = {}) {
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(readError(data));
+    const error = new Error(readError(data));
+    error.status = response.status;
+    throw error;
   }
   return data;
 }

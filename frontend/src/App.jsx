@@ -5,6 +5,8 @@ import LoginView from "./views/LoginView";
 import RegisterView from "./views/RegisterView";
 import DashboardView from "./views/DashboardView";
 import PrereqVerifyView from "./views/PrereqVerifyView";
+import TutorProfileView from "./views/TutorProfileView";
+import TutorMatchView from "./views/TutorMatchView";
 
 export default function App() {
   return (
@@ -26,6 +28,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <PrereqVerifyView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <TutorProfileView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/find-tutor"
+            element={
+              <ProtectedRoute>
+                <TutorMatchView />
               </ProtectedRoute>
             }
           />
