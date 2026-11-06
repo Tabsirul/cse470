@@ -10,6 +10,7 @@ export default function TutorMatchView() {
   const [course, setCourse] = useState("");
   const [maxRate, setMaxRate] = useState("");
   const [minRating, setMinRating] = useState("");
+  const [freeSession, setFreeSession] = useState(false);
   const [results, setResults] = useState(null);
   const [searchedCourse, setSearchedCourse] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +27,7 @@ export default function TutorMatchView() {
     setError("");
     setLoading(true);
     try {
-      const list = await searchTutors(token, { course, maxRate, minRating });
+      const list = await searchTutors(token, { course, maxRate, minRating, freeSession });
       setResults(list);
       setSearchedCourse(course);
     } catch (err) {
@@ -80,6 +81,14 @@ export default function TutorMatchView() {
               </select>
             </label>
           </div>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={freeSession}
+              onChange={(e) => setFreeSession(e.target.checked)}
+            />
+            Only tutors with a free session
+          </label>
           <button type="submit" disabled={loading}>
             {loading ? "Searching..." : "Find tutors"}
           </button>
@@ -107,6 +116,16 @@ export default function TutorMatchView() {
                     &middot; {tutor.hourly_rate} taka per hour
                   </p>
                   {tutor.bio && <p>{tutor.bio}</p>}
+                  <p>
+                    {tutor.free_sessions > 0 ? (
+                      <Link to={`/sessions?course=${searchedCourse}`}>
+                        {tutor.free_sessions} free {tutor.free_sessions === 1 ? "session" : "sessions"}{" "}
+                        - book now
+                      </Link>
+                    ) : (
+                      <span className="muted">No free session right now</span>
+                    )}
+                  </p>
                 </div>
                 <div className="score">
                   <strong>{tutor.score}</strong>
