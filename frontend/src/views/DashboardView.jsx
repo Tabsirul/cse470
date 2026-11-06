@@ -15,6 +15,16 @@ export default function DashboardView() {
       <h1>Welcome, {user.name}</h1>
       <p>Email: {user.email}</p>
       <p>Role: {user.role}</p>
+      {user.role === "student" && (
+        <p>
+          <Link to="/find-tutor">Find a tutor</Link>
+        </p>
+      )}
+      {user.role === "tutor" && (
+        <p>
+          <Link to="/profile">My tutor profile</Link>
+        </p>
+      )}
       {(user.role === "tutor" || user.role === "admin") && (
         <p>
           <Link to="/verify">Tutor course verification</Link>
