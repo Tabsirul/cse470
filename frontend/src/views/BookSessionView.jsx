@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCourses } from "../api/verifyApi";
 import { bookSlot, cancelBooking, getMyBookings, getOpenSlots } from "../api/sessionApi";
+import { payBooking } from "../api/paymentApi";
 import StatusBadge from "../components/StatusBadge";
 import { formatTime } from "../utils";
 
@@ -15,6 +16,9 @@ export default function BookSessionView() {
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [payingId, setPayingId] = useState(null); // which booking has the pay form open
+  const [method, setMethod] = useState("bkash");
+  const [account, setAccount] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -51,6 +55,21 @@ export default function BookSessionView() {
     await load(); // always refresh, so the seat counts are up to date
   }
 
+  async function handlePay(event, bookingId) {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+    try {
+      await payBooking(token, bookingId, method, account);
+      setMessage("Payment received. We hold it safely and pay the tutor after the session.");
+      setPayingId(null);
+      setAccount("");
+    } catch (err) {
+      setError(err.message);
+    }
+    await load();
+  }
+
   if (user.role !== "student") {
     return (
       <div className="page">
@@ -77,32 +96,70 @@ export default function BookSessionView() {
         {bookings.length === 0 ? (
           <p className="muted">You have not booked a session yet.</p>
         ) : (
-          bookings.map((booking) => (
-            <div className="result" key={booking.booking_id}>
-              <div>
-                <p>
-                  <strong>{booking.slot.course_code}</strong> with {booking.slot.tutor_name}{" "}
-                  <StatusBadge status={booking.status} />
-                </p>
-                <p className="muted">
-                  {formatTime(booking.slot.starts_at)} &middot; {booking.slot.duration_minutes}{" "}
-                  minutes &middot; {booking.slot.price} taka
-                </p>
+          bookings.map((booking) => {
+            const canPay =
+              booking.status === "booked" &&
+              booking.slot.status === "open" &&
+              (booking.payment_status === null || booking.payment_status === "refunded");
+            return (
+              <div className="result" key={booking.booking_id}>
+                <div>
+                  <p>
+                    <strong>{booking.slot.course_code}</strong> with {booking.slot.tutor_name}{" "}
+                    <StatusBadge status={booking.status} />{" "}
+                    {booking.payment_status && <StatusBadge status={booking.payment_status} />}
+                  </p>
+                  <p className="muted">
+                    {formatTime(booking.slot.starts_at)} &middot; {booking.slot.duration_minutes}{" "}
+                    minutes &middot; {booking.slot.price} taka
+                  </p>
+                  {payingId === booking.booking_id && (
+                    <form className="payform" onSubmit={(e) => handlePay(e, booking.booking_id)}>
+                      <select value={method} onChange={(e) => setMethod(e.target.value)}>
+                        <option value="bkash">bKash (sandbox)</option>
+                        <option value="nagad">Nagad (sandbox)</option>
+                      </select>
+                      <input
+                        type="tel"
+                        placeholder="01XXXXXXXXX"
+                        value={account}
+                        onChange={(e) => setAccount(e.target.value)}
+                        required
+                      />
+                      <button type="submit" className="small">
+                        Pay {booking.slot.price} taka
+                      </button>
+                      <p className="muted">
+                        Sandbox: no real money moves. A number ending in 0000 is declined, so you
+                        can test a failure.
+                      </p>
+                    </form>
+                  )}
+                </div>
+                <div className="actions">
+                  {canPay && payingId !== booking.booking_id && (
+                    <button className="small" onClick={() => setPayingId(booking.booking_id)}>
+                      Pay now
+                    </button>
+                  )}
+                  {booking.can_cancel && (
+                    <button
+                      className="small danger"
+                      onClick={() =>
+                        handleAction(cancelBooking, booking.booking_id, "Booking cancelled")
+                      }
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
-              {booking.can_cancel && (
-                <button
-                  className="small danger"
-                  onClick={() =>
-                    handleAction(cancelBooking, booking.booking_id, "Booking cancelled")
-                  }
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
-        <p className="muted">You can cancel up to 2 hours before the start.</p>
+        <p className="muted">
+          You can cancel up to 2 hours before the start. A payment you made is refunded in full.
+        </p>
       </div>
 
       <div className="panel">
