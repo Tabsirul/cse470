@@ -9,10 +9,11 @@ export const saveMyProfile = (token, hourlyRate, bio) =>
     body: { hourly_rate: hourlyRate, bio },
   });
 
-export function searchTutors(token, { course, maxRate, minRating }) {
+export function searchTutors(token, { course, maxRate, minRating, freeSession }) {
   const params = new URLSearchParams({ course });
   if (maxRate) params.set("max_rate", maxRate);
   if (minRating) params.set("min_rating", minRating);
   if (syllabusQuery) params.set("syllabus", syllabusQuery);
+  if (freeSession) params.set("free_session", "true");
   return apiRequest(`/api/tutors/search?${params.toString()}`, { token });
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import AuthLayout from "../components/AuthLayout";
 
 export default function RegisterView() {
   const { register } = useAuth();
@@ -34,60 +35,66 @@ export default function RegisterView() {
   }
 
   return (
-    <div className="card">
-      <h1>Create your account</h1>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Full name
-          <input value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
-        <label>
-          Email
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="off"
-            required
-          />
-        </label>
-        <label>
-          Password (at least 8 characters)
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-            minLength={8}
-            maxLength={72}
-            required
-          />
-        </label>
-        <label>
-          Confirm password
-          <input
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            autoComplete="new-password"
-            required
-          />
-        </label>
-        <label>
-          I am a
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="student">Student (I want a tutor)</option>
-            <option value="tutor">Tutor (I want to teach)</option>
-          </select>
-        </label>
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Creating account..." : "Register"}
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </div>
+    <AuthLayout>
+      <div className="card">
+        <h1>Create your account</h1>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <label>
+            Full name
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              required
+            />
+          </label>
+          <label>
+            Password (at least 8 characters)
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={8}
+              maxLength={72}
+              required
+            />
+          </label>
+          <label>
+            Confirm password
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              autoComplete="new-password"
+              required
+            />
+          </label>
+          <label>
+            I am a
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="student">Student (I want a tutor)</option>
+              <option value="tutor">Tutor (I want to teach)</option>
+            </select>
+          </label>
+          <button type="submit" disabled={submitting}>
+            {submitting ? "Creating account..." : "Register"}
+          </button>
+        </form>
+        <p>
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
+      </div>
+    </AuthLayout>
   );
 }

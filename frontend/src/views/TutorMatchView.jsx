@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCourses } from "../api/verifyApi";
 import { searchTutors } from "../api/tutorApi";
+import Stars from "../components/Stars";
 
 export default function TutorMatchView() {
   const { token } = useAuth();
@@ -14,9 +15,8 @@ export default function TutorMatchView() {
   const [maxRate, setMaxRate] = useState("");
   const [minRating, setMinRating] = useState("");
 
-  // Syllabus Topic Search States (F2)
+  const [freeSession, setFreeSession] = useState(false);
   const [syllabusQuery, setSyllabusQuery] = useState("");
-
   const [results, setResults] = useState(null);
   const [searchedCourse, setSearchedCourse] = useState("");
   const [error, setError] = useState("");
@@ -38,6 +38,7 @@ export default function TutorMatchView() {
         maxRate: activeTab === "base" ? maxRate : "",
         minRating: activeTab === "base" ? minRating : "",
         syllabusQuery: activeTab === "syllabus" ? syllabusQuery : "",
+        freeSession,
       };
 
       const list = await searchTutors(token, params);
@@ -58,7 +59,7 @@ export default function TutorMatchView() {
       </p>
       <h1>Find a tutor</h1>
 
-      {/* Sub-navigation tabs with distinct background colors */}
+      {/* Sub-navigation tabs */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
         <button
           type="button"
@@ -145,6 +146,15 @@ export default function TutorMatchView() {
             )}
           </div>
 
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={freeSession}
+              onChange={(e) => setFreeSession(e.target.checked)}
+            />
+            Only tutors with a free session
+          </label>
+          
           <button type="submit" disabled={loading} style={{ marginTop: "15px" }}>
             {loading ? "Searching..." : activeTab === "syllabus" ? "Find tutors for this topic" : "Find tutors"}
           </button>
@@ -161,7 +171,7 @@ export default function TutorMatchView() {
             <p className="muted">
               {activeTab === "syllabus"
                 ? "No tutors found covering those specific exam or lab syllabus topics for this course."
-                : "No tutor matches found for your budget or rating filters."}
+                : "No tutor matches found for your budget, rating or free session filters."}
             </p>
           ) : (
             results.map((tutor, index) => (
@@ -171,17 +181,39 @@ export default function TutorMatchView() {
                     <span className="rank">#{index + 1}</span> <strong>{tutor.tutor_name}</strong>
                   </p>
                   <p className="muted">
-                    Grade in {searchedCourse}: {tutor.grade} &middot;{" "}
-                    {tutor.rating === null ? "New tutor, no reviews yet" : `${tutor.rating} stars`}{" "}
-                    &middot; {tutor.hourly_rate} taka per hour
+                    Grade in {searchedCourse}: {tutor.grade} &middot; {tutor.hourly_rate} taka per
+                    hour
                   </p>
-                  {tutor.bio && <p>{tutor.bio}</p>}
+                  <p>
+                    {tutor.rating === null ? (
+                      <span className="muted">New tutor, no reviews yet</span>
+                    ) : (
+                      <>
+                        <Stars value={tutor.rating} /> {tutor.rating} ({tutor.review_count}{" "}
+                        {tutor.review_count === 1 ? "review" : "reviews"}){" "}
+                        <Link to={`/tutors/${tutor.tutor_id}/reviews`}>Read reviews</Link>
+                      </>
+                    )}
+                  </p>
+                  <div className="panel">
+                    <p>
+                      {tutor.free_sessions > 0 ? (
+                        <Link to={`/sessions?course=${searchedCourse}`}>
+                          {tutor.free_sessions} free {tutor.free_sessions === 1 ? "session" : "sessions"}{" "}
+                          - book now
+                        </Link>
+                      ) : (
+                        <span className="muted">No free session right now</span>
+                      )}
+                    </p>
+                    {tutor.bio && <p>{tutor.bio}</p>}
 
-                  {tutor.syllabus_topics && (
-                    <div style={{ marginTop: "8px", fontSize: "0.85em", color: "#1e293b", backgroundColor: "#f8fafc", padding: "6px 10px", borderRadius: "4px", border: "1px solid #e2e8f0" }}>
-                      <strong style={{ color: "#0f172a" }}>Covered Syllabus Topics:</strong> {tutor.syllabus_topics}
-                    </div>
-                  )}
+                    {tutor.syllabus_topics && (
+                      <div style={{ marginTop: "8px", fontSize: "0.85em", color: "#1e293b", backgroundColor: "#f8fafc", padding: "6px 10px", borderRadius: "4px", border: "1px solid #e2e8f0" }}>
+                        <strong style={{ color: "#0f172a" }}>Covered Syllabus Topics:</strong> {tutor.syllabus_topics}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="score">
                   <strong>{tutor.score}</strong>
