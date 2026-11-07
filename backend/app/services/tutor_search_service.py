@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.course import Course
+from app.models.syllabus import Syllabus
 from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
 from app.models.user import User
@@ -17,18 +18,31 @@ def search_tutors(
     max_rate: int | None,
     min_rating: float | None,
     only_with_free_session: bool = False,
+    syllabus_query: str | None = None,
 ) -> list[dict]:
     course = db.scalar(select(Course).where(Course.code == course_code.strip().upper()))
     if course is None:
         raise NotFoundError("Course not found")
 
     # Only tutors with a profile AND an approved application for this course.
-    rows = db.execute(
+    stmt = (
         select(TutorProfile, TutorCourse, User)
         .join(TutorCourse, TutorCourse.tutor_id == TutorProfile.user_id)
         .join(User, User.id == TutorProfile.user_id)
+        .outerjoin(Course, Course.id == TutorCourse.course_id)
+        .outerjoin(Syllabus, Syllabus.course_id == Course.id)
         .where(TutorCourse.course_id == course.id, TutorCourse.status == "approved")
-    ).all()
+    )
+    if syllabus_query:
+        keyword = f"%{syllabus_query}%"
+        stmt = stmt.where(
+            or_(
+                Syllabus.midterm_topics.ilike(keyword),
+                Syllabus.assignment_modules.ilike(keyword),
+                Syllabus.lab_requirements.ilike(keyword),
+            )
+        )
+    rows = db.execute(stmt).all()
 
     stats = rating_stats(db, [user.id for _, _, user in rows])  # tutor id -> (average, count)
     bios = {}
