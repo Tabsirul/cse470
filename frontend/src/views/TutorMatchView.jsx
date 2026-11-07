@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getCourses } from "../api/verifyApi";
 import { searchTutors } from "../api/tutorApi";
-
+import Stars from "../components/Stars";
 export default function TutorMatchView() {
   const { token } = useAuth();
   const [courses, setCourses] = useState([]);
@@ -99,10 +99,7 @@ export default function TutorMatchView() {
         <div className="panel">
           <h2>Tutors for {searchedCourse}</h2>
           {results.length === 0 ? (
-            <p className="muted">
-              No tutor matches. Try a higher budget or a lower rating. Tutors with no reviews
-              are hidden when you choose a lowest rating.
-            </p>
+            <p className="muted">No tutors found for this course.</p>
           ) : (
             results.map((tutor, index) => (
               <div className="result" key={tutor.tutor_id}>
@@ -111,9 +108,19 @@ export default function TutorMatchView() {
                     <span className="rank">#{index + 1}</span> <strong>{tutor.tutor_name}</strong>
                   </p>
                   <p className="muted">
-                    Grade in {searchedCourse}: {tutor.grade} &middot;{" "}
-                    {tutor.rating === null ? "New tutor, no reviews yet" : `${tutor.rating} stars`}{" "}
-                    &middot; {tutor.hourly_rate} taka per hour
+                    Grade in {searchedCourse}: {tutor.grade} &middot; {tutor.hourly_rate} taka per
+                    hour
+                  </p>
+                  <p>
+                    {tutor.rating === null ? (
+                      <span className="muted">New tutor, no reviews yet</span>
+                    ) : (
+                      <>
+                        <Stars value={tutor.rating} /> {tutor.rating} ({tutor.review_count}{" "}
+                        {tutor.review_count === 1 ? "review" : "reviews"}){" "}
+                        <Link to={`/tutors/${tutor.tutor_id}/reviews`}>Read reviews</Link>
+                      </>
+                    )}
                   </p>
                   {tutor.bio && <p>{tutor.bio}</p>}
                   <p>

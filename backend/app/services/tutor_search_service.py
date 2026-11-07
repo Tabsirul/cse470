@@ -5,18 +5,10 @@ from app.models.course import Course
 from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
 from app.models.user import User
-from app.services.errors import NotFoundError
 from app.services.booking_service import free_slot_counts
+from app.services.errors import NotFoundError
 from app.services.matching import Candidate, rank_candidates
-
-
-def _ratings_for(db: Session, tutor_ids: list[int]) -> dict[int, float]:
-    """Average review stars for each tutor.
-
-    Reviews (F13) do not exist yet, so nobody has a rating for now.
-    This function will read the reviews table once F13 is built.
-    """
-    return {}
+from app.services.review_service import rating_stats
 
 
 def search_tutors(
@@ -38,18 +30,19 @@ def search_tutors(
         .where(TutorCourse.course_id == course.id, TutorCourse.status == "approved")
     ).all()
 
-    ratings = _ratings_for(db, [user.id for _, _, user in rows])
+    stats = rating_stats(db, [user.id for _, _, user in rows])  # tutor id -> (average, count)
     bios = {}
     candidates = []
     for profile, claim, user in rows:
         bios[user.id] = profile.bio
+        average = stats[user.id][0] if user.id in stats else None
         candidates.append(
             Candidate(
                 tutor_id=user.id,
                 name=user.name,
                 hourly_rate=profile.hourly_rate,
                 grade=claim.claimed_grade,
-                rating=ratings.get(user.id),
+                rating=average,
             )
         )
 
@@ -66,6 +59,7 @@ def search_tutors(
             "hourly_rate": candidate.hourly_rate,
             "grade": candidate.grade,
             "rating": candidate.rating,
+            "review_count": stats[candidate.tutor_id][1] if candidate.tutor_id in stats else 0,
             "score": score,
             "free_sessions": free.get(candidate.tutor_id, 0),
         }

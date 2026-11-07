@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { getCourses } from "../api/verifyApi";
 import { bookSlot, cancelBooking, getMyBookings, getOpenSlots } from "../api/sessionApi";
 import { payBooking } from "../api/paymentApi";
+import { createReview } from "../api/reviewApi";
+import Stars from "../components/Stars";
 import StatusBadge from "../components/StatusBadge";
 import { formatTime } from "../utils";
 
@@ -19,6 +21,9 @@ export default function BookSessionView() {
   const [payingId, setPayingId] = useState(null); // which booking has the pay form open
   const [method, setMethod] = useState("bkash");
   const [account, setAccount] = useState("");
+  const [reviewingId, setReviewingId] = useState(null); // which booking has the review form open
+  const [stars, setStars] = useState(5);
+  const [comment, setComment] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -70,6 +75,22 @@ export default function BookSessionView() {
     await load();
   }
 
+  async function handleReview(event, bookingId) {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+    try {
+      await createReview(token, bookingId, stars, comment);
+      setMessage("Thank you for your review");
+      setReviewingId(null);
+      setStars(5);
+      setComment("");
+    } catch (err) {
+      setError(err.message);
+    }
+    await load();
+  }
+
   if (user.role !== "student") {
     return (
       <div className="page">
@@ -101,6 +122,11 @@ export default function BookSessionView() {
               booking.status === "booked" &&
               booking.slot.status === "open" &&
               (booking.payment_status === null || booking.payment_status === "refunded");
+            const canReview =
+              booking.status === "booked" &&
+              booking.slot.status === "completed" &&
+              booking.payment_status === "released" &&
+              booking.review_rating === null;
             return (
               <div className="result" key={booking.booking_id}>
                 <div>
@@ -113,6 +139,38 @@ export default function BookSessionView() {
                     {formatTime(booking.slot.starts_at)} &middot; {booking.slot.duration_minutes}{" "}
                     minutes &middot; {booking.slot.price} taka
                   </p>
+                  {booking.review_rating !== null && (
+                    <p className="muted">
+                      Your review: <Stars value={booking.review_rating} />
+                    </p>
+                  )}
+                  {reviewingId === booking.booking_id && (
+                    <form className="reviewform" onSubmit={(e) => handleReview(e, booking.booking_id)}>
+                      <div className="starpicker">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button
+                            type="button"
+                            key={n}
+                            className={n <= stars ? "star on" : "star"}
+                            onClick={() => setStars(n)}
+                            aria-label={`${n} stars`}
+                          >
+                            ★
+                          </button>
+                        ))}
+                      </div>
+                      <textarea
+                        rows="3"
+                        maxLength="500"
+                        placeholder="How was the session? (optional)"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                      />
+                      <button type="submit" className="small">
+                        Send review
+                      </button>
+                    </form>
+                  )}
                   {payingId === booking.booking_id && (
                     <form className="payform" onSubmit={(e) => handlePay(e, booking.booking_id)}>
                       <select value={method} onChange={(e) => setMethod(e.target.value)}>
@@ -137,6 +195,11 @@ export default function BookSessionView() {
                   )}
                 </div>
                 <div className="actions">
+                  {canReview && reviewingId !== booking.booking_id && (
+                    <button className="small" onClick={() => setReviewingId(booking.booking_id)}>
+                      Leave a review
+                    </button>
+                  )}
                   {canPay && payingId !== booking.booking_id && (
                     <button className="small" onClick={() => setPayingId(booking.booking_id)}>
                       Pay now

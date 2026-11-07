@@ -6,3 +6,4 @@ from app.models.tutor_profile import TutorProfile
 from app.models.session_slot import SessionSlot
 from app.models.booking import Booking
 from app.models.payment import Payment
+from app.models.review import Review

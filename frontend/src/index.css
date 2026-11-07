@@ -261,3 +261,72 @@ label.check input {
   display: block;
   font-size: 24px;
 }
+.stars {
+  color: #f59e0b;
+  letter-spacing: 1px;
+}
+
+.reviewform {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  max-width: 420px;
+}
+
+.reviewform button.small {
+  align-self: flex-start;
+}
+
+.starpicker {
+  display: flex;
+  gap: 2px;
+}
+
+button.star {
+  padding: 0 4px;
+  font-size: 28px;
+  line-height: 1;
+  color: #d1d5db;
+  background: none;
+}
+
+button.star.on {
+  color: #f59e0b;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: center;
+}
+
+.summary .big strong {
+  display: block;
+  font-size: 40px;
+}
+
+.bars {
+  flex: 1;
+  min-width: 200px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar {
+  flex: 1;
+  height: 8px;
+  background: #e4e8ec;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #f59e0b;
+}
