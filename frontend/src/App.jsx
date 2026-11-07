@@ -11,6 +11,7 @@ import TutorSlotsView from "./views/TutorSlotsView";
 import BookSessionView from "./views/BookSessionView";
 import PaymentsView from "./views/PaymentsView";
 import TutorEarningsView from "./views/TutorEarningsView";
+import TutorReviewsView from "./views/TutorReviewsView";
 
 export default function App() {
   return (
@@ -80,6 +81,13 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <TutorEarningsView />
+              </ProtectedRoute>
+            }
+          />          <Route
+            path="/tutors/:tutorId/reviews"
+            element={
+              <ProtectedRoute>
+                <TutorReviewsView />
               </ProtectedRoute>
             }
           />

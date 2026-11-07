@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.models.booking import Booking
 from app.models.course import Course
 from app.models.payment import Payment
+from app.models.review import Review
 from app.models.session_slot import SessionSlot
 from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
@@ -86,6 +87,7 @@ def _booking_response(db: Session, booking: Booking, now: datetime) -> dict:
             .order_by(Payment.id.desc())
             .limit(1)
         ),
+        "review_rating": db.scalar(select(Review.rating).where(Review.booking_id == booking.id)),
         "slot": slot,
     }
 

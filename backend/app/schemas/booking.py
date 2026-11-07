@@ -35,5 +35,6 @@ class BookingResponse(BaseModel):
     booking_id: int
     status: str
     can_cancel: bool
-    payment_status: str | None  # None = not paid yet       
+    payment_status: str | None  # None = not paid yet  
+    review_rating: int | None  # None = not reviewed yet     
     slot: SlotResponse

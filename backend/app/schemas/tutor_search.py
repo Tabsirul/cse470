@@ -8,5 +8,6 @@ class TutorMatchResponse(BaseModel):
     hourly_rate: int
     grade: str
     rating: float | None
+    review_count: int
     score: float
     free_sessions: int

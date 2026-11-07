@@ -45,6 +45,11 @@ export default function DashboardView() {
           <Link to="/earnings">My earnings</Link>
         </p>
       )}
+            {user.role === "tutor" && (
+        <p>
+          <Link to={`/tutors/${user.id}/reviews`}>My reviews</Link>
+        </p>
+      )}
       {(user.role === "tutor" || user.role === "admin") && (
         <p>
           <Link to="/verify">Tutor course verification</Link>
