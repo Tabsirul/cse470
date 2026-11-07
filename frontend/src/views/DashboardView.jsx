@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -6,6 +7,7 @@ const LINKS = {
     { to: "/find-tutor", title: "Find a tutor", text: "Search by course, budget and rating." },
     { to: "/sessions", title: "Book a session", text: "Book, pay for and review sessions." },
     { to: "/payments", title: "My payments", text: "See held, released and refunded payments." },
+    { to: "/issues", title: "Report an Issue", text: "Report a missed appointment, late arrival, or session problem." },
   ],
   tutor: [
     { to: "/profile", title: "My tutor profile", text: "Set your price and introduction." },
