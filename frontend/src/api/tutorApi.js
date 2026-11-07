@@ -13,5 +13,6 @@ export function searchTutors(token, { course, maxRate, minRating }) {
   const params = new URLSearchParams({ course });
   if (maxRate) params.set("max_rate", maxRate);
   if (minRating) params.set("min_rating", minRating);
+  if (syllabusQuery) params.set("syllabus", syllabusQuery);
   return apiRequest(`/api/tutors/search?${params.toString()}`, { token });
 }

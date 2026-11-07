@@ -16,9 +16,9 @@ export default function DashboardView() {
       <p>Email: {user.email}</p>
       <p>Role: {user.role}</p>
       {user.role === "student" && (
-        <p>
-          <Link to="/find-tutor">Find a tutor</Link>
-        </p>
+          <p>
+            <Link to="/find-tutor">Find a tutor</Link>
+          </p>
       )}
       {user.role === "tutor" && (
         <p>
