@@ -3,6 +3,7 @@ from app.models.dispute import Dispute
 from app.models.booking import Booking
 from app.schemas.issue import DisputeCreate
 from app.services.errors import NotFoundError, ConflictError
+from app.models.session_slot import SessionSlot
 
 def create_dispute(db: Session, dispute_in: DisputeCreate, user_id: int) -> Dispute:
     # 1. Check if the booking exists
@@ -10,11 +11,10 @@ def create_dispute(db: Session, dispute_in: DisputeCreate, user_id: int) -> Disp
     if not booking:
         raise NotFoundError(f"Booking {dispute_in.booking_id} not found")
     
-    # Note: You may need to adjust 'student_id' depending on your Booking model's exact column name.
-    # if user_id != booking.student_id:
-    #    raise ValueError("You are not authorized to report this booking.")
+    slot = db.get(SessionSlot, booking.slot_id)
 
-    # 2. Check for duplicate open reports by this user for this booking
+    if not slot or user_id not in (booking.student_id, slot.tutor_id):
+         raise NotFoundError(f"Booking {dispute_in.booking_id} not found")
     existing_report = db.query(Dispute).filter_by(
         booking_id=dispute_in.booking_id,
         reporter_id=user_id,
