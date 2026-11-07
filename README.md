@@ -1,43 +1,60 @@
 # StudyBuddy: Campus Peer Tutoring
 
-StudyBuddy is a web platform where students find tutors who did well in the same course, book a session, pay safely, and review the session afterwards. It is the CSE470 (Software Engineering) group project of Group 4 at BRAC University.
+StudyBuddy is a web-based peer tutoring platform designed to connect university students with experienced student tutors. It allows students to find suitable tutors, arrange learning sessions, make payments through a sandbox payment system, and share feedback after completed sessions.
 
-Built with React, FastAPI and PostgreSQL, following the MVC pattern.
+The project is developed as part of the CSE470 (Software Engineering) course by Group 4 at BRAC University.
 
-## What it does
+Built with React, FastAPI and PostgreSQL, following the MVC architecture.
 
-| Feature | What it does |
-|---|---|
-| F17 Prerequisite validation | A tutor applies for a course with their grade. The grade is checked against the course's minimum grade, and an admin can override the result. |
-| F1 Tutor search and matching | A student searches by course, budget and rating. Tutors are ranked by a match score from rating, grade and price. |
-| F5 Session reservation | Tutors offer one-to-one or group sessions. Seats cannot be double-booked, a student cannot book overlapping sessions, and a booking can be cancelled up to 2 hours before the start. |
-| F9 Escrow payment | A student's payment is held until the session is completed, then released to the tutor minus a 10% platform fee. It is refunded if the booking or session is cancelled. |
-| F13 Session review | A student who paid for a completed session can give 1 to 5 stars and a comment. Ratings feed back into tutor matching. |
+## Technology Stack
 
-Payments use a **sandbox**: no real money moves. A mobile number ending in `0000` is declined, so you can test a failed payment.
+- **Frontend:** React, JavaScript, HTML and CSS
+- **Backend:** Python, FastAPI
+- **Database:** PostgreSQL
+- **ORM:** SQLAlchemy
+- **Database Migrations:** Alembic
 
-Other features of the project are built by their owners on separate branches.
+## Main Capabilities
 
-## Roles
+- User registration, authentication and role-based access.
+- Student and tutor profile management.
+- Tutor search, filtering and matching.
+- Academic prerequisite and course verification.
+- Session scheduling, booking and cancellation.
+- Sandbox payment processing with escrow-style payment handling.
+- Session completion and payment release.
+- Student reviews and tutor ratings.
+- Administrative management of academic verification.
 
-- **Student:** search for tutors, book, pay and review sessions.
-- **Tutor:** make a profile, apply for courses, offer sessions, see earnings and reviews.
-- **Admin:** set grade rules and review tutor applications. To make a user an admin, run in PostgreSQL:
-  ```sql
-  UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
-  ```
+Payments are simulated through a sandbox system. No real money is transferred.
 
-## How the code is organized (MVC)
+## Project Structure
 
-| Part | Where | What it holds |
-|---|---|---|
-| Model | `backend/app/models/` | SQLAlchemy tables |
-| View | `frontend/src/views/` | React pages |
-| Controller | `backend/app/controllers/` | FastAPI routes |
-| Services | `backend/app/services/` | The business rules (matching, booking, payment, review) |
-| Schemas | `backend/app/schemas/` | Request and response shapes |
-
-The rules that decide things (grade checks, match score, booking limits, payment moves, review limits) are small functions with tests in `backend/tests/`.
+```text
+cse470/
+├── backend/
+│   ├── app/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   ├── alembic/
+│   ├── tests/
+│   ├── seed.py
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── views/
+│   │   ├── App.jsx
+│   │   └── index.css
+│   └── package.json
+│
+└── README.md
+```
 
 ## Requirements
 
@@ -46,14 +63,16 @@ The rules that decide things (grade checks, match score, booking limits, payment
 - PostgreSQL
 - Git
 
-## 1. Clone the repository
+## Installation and Setup
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Tabsirul/cse470.git
 cd cse470
 ```
 
-## 2. Set up the PostgreSQL database
+### 2. Set up the PostgreSQL database
 
 Open PostgreSQL and run:
 
@@ -62,7 +81,9 @@ CREATE USER studybuddy_user WITH PASSWORD 'YOUR_PASSWORD';
 CREATE DATABASE studybuddy OWNER studybuddy_user;
 ```
 
-## 3. Set up the backend
+If the database user and database already exist, use your existing credentials.
+
+### 3. Set up the backend
 
 ```bash
 cd backend
@@ -77,16 +98,60 @@ Create your local environment file:
 cp .env.example .env
 ```
 
-Update `backend/.env` with your PostgreSQL password.
-Also replace SECRET_KEY with your own random text. Make one with: `python3 -c "import secrets; print(secrets.token_hex(32))"`
+Update `backend/.env` with your PostgreSQL connection string:
 
-Run database migrations:
+```env
+DATABASE_URL=postgresql+psycopg2://studybuddy_user:YOUR_PASSWORD@localhost:5432/studybuddy
+SECRET_KEY=YOUR_SECRET_KEY
+```
+
+Generate a secure secret key:
+
+```bash
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+### 4. Run database migrations
+
+From the `backend` directory:
 
 ```bash
 alembic upgrade head
 ```
 
-Start the backend:
+### 5. Add initial database data
+
+StudyBuddy includes a seed script to insert starter course information and prerequisite grade rules.
+
+Run the following command from the `backend` directory:
+
+```bash
+python seed.py
+```
+
+This inserts the available starter courses and grade rules into the database.
+
+To create sample accounts for local development and testing, run:
+
+```bash
+python seed.py --demo
+```
+
+The demo accounts are:
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@example.com | password123 |
+| Tutor | tutor@example.com | password123 |
+| Student | student@example.com | password123 |
+
+The demo setup also creates a tutor profile and an approved tutor-course record.
+
+**Note:** Demo accounts use a shared test password. They are intended for local development only, not production use. The seed script avoids creating duplicate records when run repeatedly.
+
+### 6. Start the backend
+
+From the `backend` directory:
 
 ```bash
 uvicorn app.main:app --reload
@@ -96,9 +161,9 @@ Backend: http://127.0.0.1:8000
 
 API documentation: http://127.0.0.1:8000/docs
 
-## 4. Set up the frontend
+### 7. Set up and start the frontend
 
-Open another Terminal:
+Open another Terminal window:
 
 ```bash
 cd frontend
@@ -108,9 +173,11 @@ npm run dev
 
 Frontend: http://localhost:5173
 
-## 5. Verify the setup
+## Verify the Setup
 
-Visit http://127.0.0.1:8000/api/health
+Visit:
+
+http://127.0.0.1:8000/api/health
 
 Expected response:
 
@@ -123,25 +190,42 @@ Expected response:
 
 Open http://localhost:5173 to check the frontend.
 
-## Run the tests
+## Run the Tests
 
-From `backend`, with the virtual environment active:
+From the `backend` directory, with the virtual environment active:
 
 ```bash
 python -m pytest -q
 ```
 
-## Try the whole flow
+## User Roles
 
-1. Register a tutor and a student, and make one user an admin (see Roles).
-2. Tutor: apply for a course on "Tutor course verification". Admin: approve it.
-3. Tutor: save a profile, then add a session on "My session slots".
-4. Student: "Find a tutor", then "Book a session", book it and pay (sandbox).
-5. Tutor: mark the session completed after its start time. The payment is released.
-6. Student: leave a review. The tutor's rating appears in search.
+- **Student:** Search for tutors, book sessions, make payments and submit reviews.
+- **Tutor:** Manage profiles, apply for courses, offer sessions and view earnings and reviews.
+- **Admin:** Manage academic grade rules and review tutor course-verification claims.
 
-## Important
+To make an existing user an admin, run the following SQL command in PostgreSQL:
 
-- Never commit `.env`, `venv/`, or `node_modules/`.
-- Each teammate must create their own local `.env` file.
+```sql
+UPDATE users
+SET role = 'admin'
+WHERE email = 'your@email.com';
+```
+
+## Team
+
+**CSE470 Software Engineering – Group 4**
+
+BRAC University
+
+- Tabsirul Haque Nadim
+- Md. Mashrur Ryan Millat
+- Sutapa Roy
+- M. Mushfiq Monzur
+
+## Important Notes
+
+- Never commit `.env`, `venv/` or `node_modules/`.
+- Each team member must configure their own local environment.
 - Run the backend and frontend in separate Terminal windows.
+- Payments are simulated; no real financial transactions take place.
