@@ -9,6 +9,8 @@ import TutorProfileView from "./views/TutorProfileView";
 import TutorMatchView from "./views/TutorMatchView";
 import TutorSlotsView from "./views/TutorSlotsView";
 import BookSessionView from "./views/BookSessionView";
+import PaymentsView from "./views/PaymentsView";
+import TutorEarningsView from "./views/TutorEarningsView";
 
 export default function App() {
   return (
@@ -62,6 +64,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <BookSessionView />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <PaymentsView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/earnings"
+            element={
+              <ProtectedRoute>
+                <TutorEarningsView />
               </ProtectedRoute>
             }
           />

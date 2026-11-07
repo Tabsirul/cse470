@@ -25,6 +25,11 @@ export default function DashboardView() {
           <Link to="/sessions">Book a session</Link>
         </p>
       )}
+            {user.role === "student" && (
+        <p>
+          <Link to="/payments">My payments</Link>
+        </p>
+      )}
       {user.role === "tutor" && (
         <p>
           <Link to="/profile">My tutor profile</Link>
@@ -33,6 +38,11 @@ export default function DashboardView() {
       {user.role === "tutor" && (
         <p>
           <Link to="/my-slots">My session slots</Link>
+        </p>
+      )}
+            {user.role === "tutor" && (
+        <p>
+          <Link to="/earnings">My earnings</Link>
         </p>
       )}
       {(user.role === "tutor" || user.role === "admin") && (

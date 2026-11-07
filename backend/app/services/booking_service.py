@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.booking import Booking
 from app.models.course import Course
+from app.models.payment import Payment
 from app.models.session_slot import SessionSlot
 from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
@@ -16,6 +17,7 @@ from app.services.booking_rules import (
     seats_left,
     slots_overlap,
 )
+from app.services import payment_service
 from app.services.errors import ConflictError, NotFoundError
 
 
@@ -78,6 +80,12 @@ def _booking_response(db: Session, booking: Booking, now: datetime) -> dict:
         "can_cancel": booking.status == "booked"
         and slot["status"] == "open"
         and can_cancel(slot["starts_at"], now),
+        "payment_status": db.scalar(
+            select(Payment.status)
+            .where(Payment.booking_id == booking.id)
+            .order_by(Payment.id.desc())
+            .limit(1)
+        ),
         "slot": slot,
     }
 
@@ -170,11 +178,12 @@ def _own_open_slot(db: Session, tutor: User, slot_id: int) -> SessionSlot:
 def cancel_slot(db: Session, tutor: User, slot_id: int) -> dict:
     slot = _own_open_slot(db, tutor, slot_id)
     slot.status = "cancelled"
-    # every student who booked it is released too
+    # every student who booked it is released, and gets their money back
     for booking in db.scalars(
         select(Booking).where(Booking.slot_id == slot.id, Booking.status == "booked")
     ):
         booking.status = "cancelled"
+        payment_service.refund_held_for_booking(db, booking.id)
     db.commit()
     return _one_slot_response(db, slot.id)
 
@@ -186,6 +195,7 @@ def complete_slot(db: Session, tutor: User, slot_id: int) -> dict:
     if _booked_counts(db, [slot.id]).get(slot.id, 0) == 0:
         raise ConflictError("Nobody booked this session")
     slot.status = "completed"
+    payment_service.release_for_slot(db, slot.id)  # pay the tutor
     db.commit()
     return _one_slot_response(db, slot.id)
 
@@ -279,5 +289,6 @@ def cancel_booking(db: Session, student: User, booking_id: int) -> dict:
             f"Too late to cancel: cancel at least {MIN_CANCEL_HOURS} hours before the start"
         )
     booking.status = "cancelled"
+    payment_service.refund_held_for_booking(db, booking.id)  # money back, same commit
     db.commit()
     return _booking_response(db, booking, now)
