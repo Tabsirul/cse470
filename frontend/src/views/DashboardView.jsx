@@ -5,7 +5,8 @@ const LINKS = {
   student: [
     { to: "/find-tutor", title: "Find a tutor", text: "Search by course, budget and rating." },
     { to: "/sessions", title: "Book a session", text: "Book, pay for and review sessions." },
-    { to: "/payments", title: "My payments", text: "See held, released and refunded payments." },
+    { to: "/payments", title: "My payments", text: "SDee held, released and refunded payments." },
+    { to: "/issues", title: "Report an Issue", text: "Report a missed appointment, late arrival, or session problem." },
   ],
   tutor: [
     { to: "/profile", title: "My tutor profile", text: "Set your price and introduction." },
