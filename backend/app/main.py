@@ -4,13 +4,17 @@ from fastapi.responses import JSONResponse
 
 from app.controllers import auth_controller, health_controller, tutor_controller, verify_controller
 from app.controllers.IssueController import router as issue_router
+from app.controllers import auth_controller,health_controller, payment_controller, review_controller, session_controller, tutor_controller, verify_controller
 from app.services.errors import ConflictError, NotFoundError
 
 app = FastAPI(title="StudyBuddy API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -31,3 +35,6 @@ app.include_router(auth_controller.router)
 app.include_router(verify_controller.router)
 app.include_router(tutor_controller.router)
 app.include_router(issue_router)
+app.include_router(session_controller.router)
+app.include_router(payment_controller.router)
+app.include_router(review_controller.router)

@@ -7,6 +7,11 @@ import DashboardView from "./views/DashboardView";
 import PrereqVerifyView from "./views/PrereqVerifyView";
 import TutorProfileView from "./views/TutorProfileView";
 import TutorMatchView from "./views/TutorMatchView";
+import TutorSlotsView from "./views/TutorSlotsView";
+import BookSessionView from "./views/BookSessionView";
+import PaymentsView from "./views/PaymentsView";
+import TutorEarningsView from "./views/TutorEarningsView";
+import TutorReviewsView from "./views/TutorReviewsView";
 
 export default function App() {
   return (
@@ -44,6 +49,45 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <TutorMatchView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-slots"
+            element={
+              <ProtectedRoute>
+                <TutorSlotsView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <BookSessionView />
+              </ProtectedRoute>
+            }
+          />
+                    <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <PaymentsView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/earnings"
+            element={
+              <ProtectedRoute>
+                <TutorEarningsView />
+              </ProtectedRoute>
+            }
+          />          <Route
+            path="/tutors/:tutorId/reviews"
+            element={
+              <ProtectedRoute>
+                <TutorReviewsView />
               </ProtectedRoute>
             }
           />
