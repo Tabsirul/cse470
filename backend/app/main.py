@@ -2,10 +2,17 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.controllers import auth_controller, health_controller, course_controller, tutor_controller, verify_controller
-from app.controllers import auth_controller, health_controller, tutor_controller, verify_controller
+from app.controllers import (
+    auth_controller,
+    course_controller,
+    health_controller,
+    payment_controller,
+    review_controller,
+    session_controller,
+    tutor_controller,
+    verify_controller,
+)
 from app.controllers.IssueController import router as issue_router
-from app.controllers import auth_controller,health_controller, payment_controller, review_controller, session_controller, tutor_controller, verify_controller
 from app.services.errors import ConflictError, NotFoundError
 
 app = FastAPI(title="StudyBuddy API")

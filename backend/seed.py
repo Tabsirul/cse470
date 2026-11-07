@@ -16,6 +16,7 @@ from sqlalchemy.engine import make_url
 
 from app.database import SessionLocal, engine
 from app.models.course import Course
+from app.models.syllabus import Syllabus
 from app.models.prerequisite import Prerequisite
 from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
@@ -33,6 +34,14 @@ COURSES = [
 
 # course code -> lowest grade a tutor needs to teach it
 GRADE_RULES = {"CSE470": "B", "CSE220": "B+"}
+SYLLABI = [
+    (
+        "CSE470",
+        "Software process models, agile and scrum, requirements engineering, UML diagrams",
+        "Use case modelling, class diagrams, project proposal",
+        "Git and GitHub, unit testing, REST API with FastAPI",
+    ),
+]
 
 DEMO_PASSWORD = "password123"
 DEMO_USERS = [
@@ -61,6 +70,22 @@ def seed_courses(db) -> None:
             print(f"  added rule: {code} needs at least {min_grade}")
     db.commit()
 
+def seed_syllabi(db) -> None:
+    for code, midterm, assignments, labs in SYLLABI:
+        course = db.scalar(select(Course).where(Course.code == code))
+        if course is None:
+            continue
+        if db.scalar(select(Syllabus).where(Syllabus.course_id == course.id)) is None:
+            db.add(
+                Syllabus(
+                    course_id=course.id,
+                    midterm_topics=midterm,
+                    assignment_modules=assignments,
+                    lab_requirements=labs,
+                )
+            )
+            print(f"  added syllabus for {code}")
+    db.commit()
 
 def seed_demo(db) -> None:
     users = {}
@@ -107,6 +132,8 @@ def main() -> None:
     with SessionLocal() as db:
         print("Courses and grade rules:")
         seed_courses(db)
+        print("Syllabi:")
+        seed_syllabi(db)
         if demo:
             print("Demo accounts:")
             seed_demo(db)
