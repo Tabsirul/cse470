@@ -12,7 +12,7 @@ from app.controllers import (
     tutor_controller,
     verify_controller,
 )
-from app.controllers.IssueController import router as issue_router
+from app.controllers.issue_controller import router as issue_router
 from app.services.errors import ConflictError, NotFoundError
 
 app = FastAPI(title="StudyBuddy API")
