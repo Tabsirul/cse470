@@ -1,30 +1,20 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum
-from sqlalchemy.sql import func
-from app.database import Base # Adjust import based on your existing database.py location
-import enum
+from datetime import datetime
 
-class IssueType(enum.Enum):
-    MISSED_APPOINTMENT = "missed_appointment"
-    LATE_ARRIVAL = "late_arrival"
-    UNHELPFUL_SESSION = "unhelpful_session"
-    OTHER = "other"
+from sqlalchemy import DateTime, ForeignKey, String, Text, func
+from sqlalchemy.orm import Mapped, mapped_column
 
-class DisputeStatus(enum.Enum):
-    PENDING = "pending"
-    REVIEWING = "reviewing"
-    ESCALATED = "escalated"
-    RESOLVED = "resolved"
+from app.database import Base
+
 
 class Dispute(Base):
+    """A report filed by a student or tutor about a booked session."""
+
     __tablename__ = "disputes"
 
-    id = Column(Integer, primary_key=True, index=True)
-    reporter_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    session_id = Column(Integer, ForeignKey("sessions.id"), nullable=False)
-    
-    issue_type = Column(Enum(IssueType), nullable=False)
-    description = Column(Text, nullable=False)
-    status = Column(Enum(DisputeStatus), default=DisputeStatus.PENDING)
-    
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id: Mapped[int] = mapped_column(primary_key=True)
+    booking_id: Mapped[int] = mapped_column(ForeignKey("bookings.id", ondelete="CASCADE"))
+    reporter_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    issue_type: Mapped[str] = mapped_column(String(30))   # missed_appointment / late_arrival / unhelpful_session / other
+    description: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending / reviewing / escalated / resolved
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

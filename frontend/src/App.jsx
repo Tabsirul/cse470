@@ -12,6 +12,7 @@ import BookSessionView from "./views/BookSessionView";
 import PaymentsView from "./views/PaymentsView";
 import TutorEarningsView from "./views/TutorEarningsView";
 import TutorReviewsView from "./views/TutorReviewsView";
+import IssueReportView from './views/IssueReportView';
 
 export default function App() {
   return (
@@ -27,7 +28,16 @@ export default function App() {
                 <DashboardView />
               </ProtectedRoute>
             }
-          />
+            />
+          
+          <Route 
+            path="/issues" 
+            element={
+              <ProtectedRoute>
+                <IssueReportView />
+              </ProtectedRoute>
+            } 
+            />  
           <Route
             path="/verify"
             element={
