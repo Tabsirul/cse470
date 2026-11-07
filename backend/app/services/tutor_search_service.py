@@ -6,6 +6,7 @@ from app.models.tutor_course import TutorCourse
 from app.models.tutor_profile import TutorProfile
 from app.models.user import User
 from app.services.errors import NotFoundError
+from app.services.booking_service import free_slot_counts
 from app.services.matching import Candidate, rank_candidates
 
 
@@ -23,6 +24,7 @@ def search_tutors(
     course_code: str,
     max_rate: int | None,
     min_rating: float | None,
+    only_with_free_session: bool = False,
 ) -> list[dict]:
     course = db.scalar(select(Course).where(Course.code == course_code.strip().upper()))
     if course is None:
@@ -51,6 +53,10 @@ def search_tutors(
             )
         )
 
+    free = free_slot_counts(db, course.id)
+    if only_with_free_session:
+        candidates = [c for c in candidates if free.get(c.tutor_id, 0) > 0]
+
     ranked = rank_candidates(candidates, max_rate, min_rating)
     return [
         {
@@ -61,6 +67,7 @@ def search_tutors(
             "grade": candidate.grade,
             "rating": candidate.rating,
             "score": score,
+            "free_sessions": free.get(candidate.tutor_id, 0),
         }
         for candidate, score in ranked
     ]

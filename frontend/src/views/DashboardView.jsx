@@ -20,9 +20,19 @@ export default function DashboardView() {
           <Link to="/find-tutor">Find a tutor</Link>
         </p>
       )}
+      {user.role === "student" && (
+        <p>
+          <Link to="/sessions">Book a session</Link>
+        </p>
+      )}
       {user.role === "tutor" && (
         <p>
           <Link to="/profile">My tutor profile</Link>
+        </p>
+      )}
+      {user.role === "tutor" && (
+        <p>
+          <Link to="/my-slots">My session slots</Link>
         </p>
       )}
       {(user.role === "tutor" || user.role === "admin") && (

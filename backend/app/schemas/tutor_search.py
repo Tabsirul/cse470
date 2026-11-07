@@ -9,3 +9,4 @@ class TutorMatchResponse(BaseModel):
     grade: str
     rating: float | None
     score: float
+    free_sessions: int
