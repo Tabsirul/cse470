@@ -38,7 +38,7 @@ export default function TutorMatchView() {
         maxRate: activeTab === "base" ? maxRate : "",
         minRating: activeTab === "base" ? minRating : "",
         syllabusQuery: activeTab === "syllabus" ? syllabusQuery : "",
-        freeSession,
+        freeSession: activeTab === "base" ? freeSession : false,
       };
 
       const list = await searchTutors(token, params);
@@ -63,7 +63,11 @@ export default function TutorMatchView() {
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
         <button
           type="button"
-          onClick={() => { setActiveTab("base"); setResults(null); }}
+          onClick={() => {
+            setActiveTab("base");
+            setFreeSession(false);
+            setResults(null);
+          }}
           style={{
             padding: "10px 18px",
             borderRadius: "6px",
@@ -78,7 +82,11 @@ export default function TutorMatchView() {
         </button>
         <button
           type="button"
-          onClick={() => { setActiveTab("syllabus"); setResults(null); }}
+          onClick={() => {
+            setActiveTab("syllabus");
+            setFreeSession(false);
+            setResults(null);
+          }}
           style={{
             padding: "10px 18px",
             borderRadius: "6px",
@@ -146,17 +154,23 @@ export default function TutorMatchView() {
             )}
           </div>
 
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={freeSession}
-              onChange={(e) => setFreeSession(e.target.checked)}
-            />
-            Only tutors with a free session
-          </label>
-          
+          {activeTab === "base" && (
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={freeSession}
+                onChange={(e) => setFreeSession(e.target.checked)}
+              />
+              Only tutors with a free session
+            </label>
+          )}
+
           <button type="submit" disabled={loading} style={{ marginTop: "15px" }}>
-            {loading ? "Searching..." : activeTab === "syllabus" ? "Find tutors for this topic" : "Find tutors"}
+            {loading
+              ? "Searching..."
+              : activeTab === "syllabus"
+              ? "Find tutors for this topic"
+              : "Find tutors"}
           </button>
         </form>
       </div>
@@ -209,8 +223,19 @@ export default function TutorMatchView() {
                     {tutor.bio && <p>{tutor.bio}</p>}
 
                     {tutor.syllabus_topics && (
-                      <div style={{ marginTop: "8px", fontSize: "0.85em", color: "#1e293b", backgroundColor: "#f8fafc", padding: "6px 10px", borderRadius: "4px", border: "1px solid #e2e8f0" }}>
-                        <strong style={{ color: "#0f172a" }}>Covered Syllabus Topics:</strong> {tutor.syllabus_topics}
+                      <div
+                        style={{
+                          marginTop: "8px",
+                          fontSize: "0.85em",
+                          color: "#1e293b",
+                          backgroundColor: "#f8fafc",
+                          padding: "6px 10px",
+                          borderRadius: "4px",
+                          border: "1px solid #e2e8f0",
+                        }}
+                      >
+                        <strong style={{ color: "#0f172a" }}>Covered Syllabus Topics:</strong>{" "}
+                        {tutor.syllabus_topics}
                       </div>
                     )}
                   </div>
