@@ -34,7 +34,8 @@ def search_tutors(
     max_rate: int | None = Query(default=None, gt=0),
     min_rating: float | None = Query(default=None, ge=1, le=5),
     free_session: bool = Query(default=False),
+    syllabus: str | None = Query(default=None, description="Filter by midterm topics, modules, or labs"),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return tutor_search_service.search_tutors(db, course, max_rate, min_rating, free_session)
+    return tutor_search_service.search_tutors(db, course, max_rate, min_rating, free_session, syllabus_query=syllabus)
