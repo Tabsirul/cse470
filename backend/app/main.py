@@ -11,11 +11,16 @@ from app.controllers import (
     session_controller,
     tutor_controller,
     verify_controller,
+    material_controller,
 )
 from app.controllers.issue_controller import router as issue_router
 from app.services.errors import ConflictError, NotFoundError
 
 app = FastAPI(title="StudyBuddy API")
+
+
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +28,7 @@ app.add_middleware(
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -47,3 +53,4 @@ app.include_router(issue_router)
 app.include_router(session_controller.router)
 app.include_router(payment_controller.router)
 app.include_router(review_controller.router)
+app.include_router(material_controller.router)

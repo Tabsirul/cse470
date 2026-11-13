@@ -9,3 +9,4 @@ from app.models.booking import Booking
 from app.models.payment import Payment
 from app.models.review import Review
 from app.models.dispute import Dispute
+from app.models.material import Material

@@ -27,7 +27,7 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('role', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)

@@ -145,7 +145,7 @@ def review_claim(db: Session, admin: User, claim_id: int, status: str, reason: s
     claim.status = status
     claim.reason = reason or f"Decided by admin {admin.name}."
     claim.reviewed_by_id = admin.id
-    claim.reviewed_at = func.now()
+    claim.reviewed_at = "CURRENT_TIMESTAMP"
     db.commit()
     db.refresh(claim)
 

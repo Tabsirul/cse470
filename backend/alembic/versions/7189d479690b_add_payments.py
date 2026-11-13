@@ -32,8 +32,8 @@ def upgrade() -> None:
     sa.Column('refund_reference', sa.String(length=40), nullable=True),
     sa.Column('tutor_amount', sa.Integer(), nullable=True),
     sa.Column('platform_fee', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
+    sa.Column('updated_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['booking_id'], ['bookings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )

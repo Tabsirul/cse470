@@ -19,4 +19,4 @@ class SessionSlot(Base):
     capacity: Mapped[int] = mapped_column(default=1)
     price: Mapped[int] = mapped_column()  # taka per student, fixed when the slot is made
     status: Mapped[str] = mapped_column(String(20), default="open")  # open / cancelled / completed
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

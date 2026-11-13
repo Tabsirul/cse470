@@ -56,7 +56,7 @@ def pay_booking(db: Session, student: User, booking_id: int, method: str, accoun
         )
         is not None
     )
-    problem = payment_problem(booking.status, slot.status, slot.starts_at, datetime.now(), already_paid)
+    problem = payment_problem(booking.status, slot.status, slot.starts_at, datetime.CURRENT_TIMESTAMP, already_paid)
     if problem is not None:
         raise ConflictError(problem)
 

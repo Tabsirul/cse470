@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.Column('capacity', sa.Integer(), nullable=False),
     sa.Column('price', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ),
     sa.ForeignKeyConstraint(['tutor_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -40,7 +40,7 @@ def upgrade() -> None:
     sa.Column('slot_id', sa.Integer(), nullable=False),
     sa.Column('student_id', sa.Integer(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['slot_id'], ['session_slots.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['student_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),

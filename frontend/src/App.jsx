@@ -13,6 +13,8 @@ import PaymentsView from "./views/PaymentsView";
 import TutorEarningsView from "./views/TutorEarningsView";
 import TutorReviewsView from "./views/TutorReviewsView";
 import IssueReportView from './views/IssueReportView';
+import MaterialHubView from './views/MaterialHubView';
+
 
 export default function App() {
   return (
@@ -100,7 +102,17 @@ export default function App() {
                 <TutorReviewsView />
               </ProtectedRoute>
             }
+          /> 
+          <Route
+            path="/materials"
+            element={
+              <ProtectedRoute>
+                <MaterialHubView />
+              </ProtectedRoute>
+            }
           />
+
+      
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>

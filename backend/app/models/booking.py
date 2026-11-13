@@ -14,4 +14,4 @@ class Booking(Base):
     slot_id: Mapped[int] = mapped_column(ForeignKey("session_slots.id", ondelete="CASCADE"))
     student_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     status: Mapped[str] = mapped_column(String(20), default="booked")  # booked / cancelled
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

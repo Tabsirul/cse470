@@ -17,4 +17,4 @@ class TutorCourse(Base):
     reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
     reviewed_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

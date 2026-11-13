@@ -32,7 +32,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('course_id', sa.Integer(), nullable=False),
     sa.Column('min_grade', sa.String(length=3), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('course_id')
@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('reason', sa.String(length=255), nullable=True),
     sa.Column('reviewed_by_id', sa.Integer(), nullable=True),
     sa.Column('reviewed_at', sa.DateTime(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['reviewed_by_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['tutor_id'], ['users.id'], ondelete='CASCADE'),

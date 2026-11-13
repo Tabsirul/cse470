@@ -12,7 +12,7 @@ class TutorProfile(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True)
     bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     hourly_rate: Mapped[int] = mapped_column()  # taka (BDT) per hour
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now(), onupdate=func.now()
+        DateTime, default=__import__('datetime').datetime.now, onupdate="CURRENT_TIMESTAMP"
     )

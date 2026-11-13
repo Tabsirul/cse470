@@ -11,4 +11,4 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(20), default="student")  # student, tutor, admin
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

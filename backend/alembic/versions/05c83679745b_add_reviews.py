@@ -28,7 +28,7 @@ def upgrade() -> None:
     sa.Column('student_id', sa.Integer(), nullable=False),
     sa.Column('rating', sa.Integer(), nullable=False),
     sa.Column('comment', sa.Text(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.CheckConstraint('rating BETWEEN 1 AND 5', name='ck_review_rating'),
     sa.ForeignKeyConstraint(['booking_id'], ['bookings.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['student_id'], ['users.id'], ondelete='CASCADE'),

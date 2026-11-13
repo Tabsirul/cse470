@@ -21,7 +21,7 @@ class Payment(Base):
     refund_reference: Mapped[str | None] = mapped_column(String(40), nullable=True)
     tutor_amount: Mapped[int | None] = mapped_column(nullable=True)  # filled when released
     platform_fee: Mapped[int | None] = mapped_column(nullable=True)  # filled when released
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now(), onupdate=func.now()
+        DateTime, default=__import__('datetime').datetime.now, onupdate="CURRENT_TIMESTAMP"
     )

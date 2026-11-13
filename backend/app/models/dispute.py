@@ -17,4 +17,4 @@ class Dispute(Base):
     issue_type: Mapped[str] = mapped_column(String(30))   # missed_appointment / late_arrival / unhelpful_session / other
     description: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(20), default="pending")  # pending / reviewing / escalated / resolved
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

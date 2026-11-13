@@ -26,8 +26,8 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('bio', sa.Text(), nullable=True),
     sa.Column('hourly_rate', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
+    sa.Column('updated_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')

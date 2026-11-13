@@ -13,4 +13,4 @@ class Prerequisite(Base):
         ForeignKey("courses.id", ondelete="CASCADE"), unique=True
     )
     min_grade: Mapped[str] = mapped_column(String(3))  # lowest grade allowed, e.g. "A-"
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

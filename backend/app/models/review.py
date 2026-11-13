@@ -21,4 +21,4 @@ class Review(Base):
     student_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     rating: Mapped[int] = mapped_column()  # 1 to 5 stars
     comment: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=__import__('datetime').datetime.now)

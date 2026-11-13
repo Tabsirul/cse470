@@ -98,7 +98,7 @@ def free_slot_counts(db: Session, course_id: int) -> dict[int, int]:
         select(SessionSlot).where(
             SessionSlot.course_id == course_id,
             SessionSlot.status == "open",
-            SessionSlot.starts_at > datetime.now(),
+            SessionSlot.starts_at > datetime.CURRENT_TIMESTAMP,
         )
     ).all()
     counts = _booked_counts(db, [slot.id for slot in slots])
@@ -137,7 +137,7 @@ def create_slot(
     if profile is None:
         raise ConflictError("Make your tutor profile first")
 
-    if starts_at <= datetime.now():
+    if starts_at <= datetime.CURRENT_TIMESTAMP:
         raise ConflictError("The start time must be in the future")
 
     my_open = db.scalars(
@@ -192,7 +192,7 @@ def cancel_slot(db: Session, tutor: User, slot_id: int) -> dict:
 
 def complete_slot(db: Session, tutor: User, slot_id: int) -> dict:
     slot = _own_open_slot(db, tutor, slot_id)
-    if slot.starts_at > datetime.now():
+    if slot.starts_at > datetime.CURRENT_TIMESTAMP:
         raise ConflictError("The session has not started yet")
     if _booked_counts(db, [slot.id]).get(slot.id, 0) == 0:
         raise ConflictError("Nobody booked this session")
@@ -206,7 +206,7 @@ def complete_slot(db: Session, tutor: User, slot_id: int) -> dict:
 
 def list_open_slots(db: Session, course_code: str | None) -> list[dict]:
     query = _slot_query().where(
-        SessionSlot.status == "open", SessionSlot.starts_at > datetime.now()
+        SessionSlot.status == "open", SessionSlot.starts_at > datetime.CURRENT_TIMESTAMP
     )
     if course_code:
         query = query.where(Course.code == course_code.strip().upper())
@@ -223,7 +223,7 @@ def book_slot(db: Session, student: User, slot_id: int) -> dict:
     if slot.status != "open":
         raise ConflictError("This session is not open for booking")
 
-    now = datetime.now()
+    now = datetime.CURRENT_TIMESTAMP
     booked = _booked_counts(db, [slot.id]).get(slot.id, 0)
 
     existing = db.scalar(
@@ -268,7 +268,7 @@ def book_slot(db: Session, student: User, slot_id: int) -> dict:
 
 
 def my_bookings(db: Session, student: User) -> list[dict]:
-    now = datetime.now()
+    now = datetime.CURRENT_TIMESTAMP
     bookings = db.scalars(
         select(Booking)
         .join(SessionSlot, SessionSlot.id == Booking.slot_id)
@@ -285,7 +285,7 @@ def cancel_booking(db: Session, student: User, booking_id: int) -> dict:
     if booking.status != "booked":
         raise ConflictError("This booking is already cancelled")
     slot = db.get(SessionSlot, booking.slot_id)
-    now = datetime.now()
+    now = datetime.CURRENT_TIMESTAMP
     if not can_cancel(slot.starts_at, now):
         raise ConflictError(
             f"Too late to cancel: cancel at least {MIN_CANCEL_HOURS} hours before the start"

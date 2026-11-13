@@ -28,7 +28,7 @@ def upgrade() -> None:
     sa.Column('issue_type', sa.String(length=30), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
     sa.Column('status', sa.String(length=20), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), default=__import__('datetime').datetime.now, nullable=False),
     sa.ForeignKeyConstraint(['booking_id'], ['bookings.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['reporter_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')

@@ -8,6 +8,8 @@ const LINKS = {
     { to: "/sessions", title: "Book a session", text: "Book, pay for and review sessions." },
     { to: "/payments", title: "My payments", text: "See held, released and refunded payments." },
     { to: "/issues", title: "Report an Issue", text: "Report a missed appointment, late arrival, or session problem." },
+    { to: "/materials", title: "Material Hub", text: "Upload and view course materials." },
+  
   ],
   tutor: [
     { to: "/profile", title: "My tutor profile", text: "Set your price and introduction." },
